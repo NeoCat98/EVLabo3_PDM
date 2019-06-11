@@ -1,30 +1,28 @@
 package com.example.moviedex.Fragments
 
-
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.content.res.Configuration
 import com.example.moviedex.Adapters.MovieAdapter
-import com.example.moviedex.Movie
+import com.example.moviedex.DataBase.Entities.Movie
+import com.example.moviedex.DataBase.Entities.MoviePreview
 import com.example.moviedex.R
 import kotlinx.android.synthetic.main.fragment_movie_list.view.*
 import java.lang.ClassCastException
 
 
 class MovieFragment : Fragment() {
-    private lateinit var movies: List<Movie>
+    private lateinit var movies: List<MoviePreview>
     private lateinit var movieAdapter: MovieAdapter
     var listenerTool :  SearchNewMovieListener? = null
 
     companion object {
-        fun newInstance(dataset : List<Movie>): MovieFragment {
+        fun newInstance(dataset : List<MoviePreview>): MovieFragment {
             val newFragment = MovieFragment()
             newFragment.movies = dataset
             return newFragment
@@ -32,16 +30,16 @@ class MovieFragment : Fragment() {
     }
 
     interface SearchNewMovieListener{
-        fun managePortraitItemClick(movie: Movie)
+        fun managePortraitItemClick(movie: MoviePreview)
 
-        fun manageLandscapeItemClick(movie: Movie)
+        fun manageLandscapeItemClick(movie: MoviePreview)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_movie_list, container, false)
         if(savedInstanceState != null)
-            movies = savedInstanceState.getParcelableArrayList<Movie>("KEY_MOVIE")!!
+            movies = savedInstanceState.getParcelableArrayList<MoviePreview>("KEY_MOVIE")!!
         initRecyclerView(resources.configuration.orientation, view)
 
         return view
@@ -69,11 +67,11 @@ class MovieFragment : Fragment() {
 
         if(orientation == Configuration.ORIENTATION_PORTRAIT){
             movieAdapter = MovieAdapter(
-                movies,{ movie: Movie -> listenerTool?.managePortraitItemClick(movie) })
+                movies,{ movie: MoviePreview -> listenerTool?.managePortraitItemClick(movie) })
 
         }else{
             movieAdapter = MovieAdapter(
-                movies,{ movie: Movie -> listenerTool?.manageLandscapeItemClick(movie) })
+                movies,{ movie: MoviePreview -> listenerTool?.manageLandscapeItemClick(movie) })
         }
         container.list.apply {
             setHasFixedSize(true)
@@ -82,7 +80,7 @@ class MovieFragment : Fragment() {
         }
     }
 
-    fun updateMovieAdapter(movieList: List<Movie>){
+    fun updateMovieAdapter(movieList: List<MoviePreview>){
         movieAdapter.changeDataSet(movieList)
     }
 

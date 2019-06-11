@@ -14,7 +14,7 @@ import com.example.moviedex.DataBase.Network.Network
 class movieRepo (val movieDAO: movieDAO,val previewDao: previewDao,val network:Network){
 
     @WorkerThread
-    suspend  fun insertPreview(preview:MoviePreview){
+    suspend  fun insertPreview(preview:List<MoviePreview>){
         previewDao.insert(preview)
     }
 
@@ -23,7 +23,7 @@ class movieRepo (val movieDAO: movieDAO,val previewDao: previewDao,val network:N
     @WorkerThread
     suspend fun nukePreview() = previewDao.nuke()
 
-    fun getPreview(search:String): Deferred<Response<Search>> = network.search(search)
+    fun getPreview(search:String): Deferred<Response<Search>> = network.search(search,"6fd8f447")
 
 
     @WorkerThread
@@ -36,7 +36,7 @@ class movieRepo (val movieDAO: movieDAO,val previewDao: previewDao,val network:N
     @WorkerThread
     suspend fun nukeMain() = movieDAO.nuke()
 
-    fun getMain(search:String): Deferred<Response<Movie>> = network.getmovie(search)
+    fun getMain(search:String): Deferred<Response<Movie>> = network.getmovie(search,"6fd8f447")
 
 
 

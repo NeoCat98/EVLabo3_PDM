@@ -1,12 +1,11 @@
 package com.example.moviedex.Activities
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.moviedex.Movie
+import com.example.moviedex.DataBase.Entities.Movie
 import com.example.moviedex.R
 import kotlinx.android.synthetic.main.activity_movie_info.*
-import kotlinx.android.synthetic.main.fragment_movie.view.*
 
 class MovieInfoActivity : AppCompatActivity() {
 
@@ -21,14 +20,12 @@ class MovieInfoActivity : AppCompatActivity() {
         actors_main_content.text = movie.Actors
         director_main_content.text = movie.Director
         genre_main_content.text = movie.Genre
-        movie_rate_main_content.text = movie.Ratings
+        movie_rate_main_content.text = movie.imdbRating
         movie_title_main_content.text = movie.Title
         released_main_content.text = movie.Released
-        awards_main_content.text = movie.Awards
-        rated_main_content.text = movie.Rated
+        awards_main_content.text = movie.Language
         runtime_main_content.text = movie.Runtime
-        writer_main_content.text = movie.Writer
-        plot_main_content.text = movie.plot
+        plot_main_content.text = movie.Plot
         Glide.with(this)
             .load(movie.Poster)
             .placeholder(R.drawable.ic_launcher_background)

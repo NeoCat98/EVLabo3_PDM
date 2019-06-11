@@ -2,10 +2,10 @@ package com.example.moviedex.Fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.example.moviedex.R
 import kotlinx.android.synthetic.main.fragment_search_bar.*
 import kotlinx.android.synthetic.main.fragment_search_bar.view.*
@@ -27,7 +27,7 @@ class SearchFragment: Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search_bar, container, false)
         view.btn_search.setOnClickListener {
-            listener?.searchMovie(et_ref.text.toString())
+            listener?.searchMovie(view.et_ref.text.toString())
         }
         return view
     }

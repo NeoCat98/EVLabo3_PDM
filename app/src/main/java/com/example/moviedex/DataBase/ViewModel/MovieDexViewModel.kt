@@ -15,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ViewModel(private val app : Application): AndroidViewModel(app) {
+class MovieDexViewModel(private val app : Application): AndroidViewModel(app) {
 
     private val repository: movieRepo
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -25,13 +25,12 @@ class ViewModel(private val app : Application): AndroidViewModel(app) {
         val previeDAO = Roomie.getInstance(app).previewDao()
         repository = movieRepo(movieoDAO, previeDAO, Network.getNetworkInstance())
     }
-
     private val movieslist = MutableLiveData<MutableList<MoviePreview>>()
 
     private val movieResult = MutableLiveData<Movie>()
 
 
-    private suspend fun insertpreview(preview: MoviePreview) = repository.insertPreview(preview)
+    suspend fun insertpreview(preview: List<MoviePreview>) = repository.insertPreview(preview)
 
     fun todospreview(): LiveData<List<MoviePreview>> = repository.todosPreview()
 

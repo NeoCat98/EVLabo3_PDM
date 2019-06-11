@@ -1,35 +1,50 @@
 package com.example.moviedex.Activities
 
 import android.content.Intent
-import android.content.res.Configuration
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.widget.Toast
-import com.example.moviedex.Movie
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.viewModelScope
+import com.example.moviedex.DataBase.Entities.MoviePreview
+import com.example.moviedex.DataBase.ViewModel.MovieDexViewModel
 import com.example.moviedex.Fragments.MovieFragment
 import com.example.moviedex.Fragments.MovieInfoFragment
 import com.example.moviedex.R
 import com.example.moviedex.Fragments.SearchFragment
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), SearchFragment.onSearchListener,
     MovieFragment.SearchNewMovieListener {
 
-    private lateinit var movie:List<Movie>
 
     private lateinit var movieFragment:MovieFragment
     private lateinit var movieInfoFragment: MovieInfoFragment
+    lateinit var viewModel: MovieDexViewModel
 
-
-    override fun managePortraitItemClick(movie: Movie) {
+    override fun managePortraitItemClick(movie: MoviePreview) {
         val movieBundle = Bundle()
-        movieBundle.putParcelable("com.example.movie", movie)
-        startActivity(Intent(this, MovieInfoActivity::class.java).putExtras(movieBundle))
+        viewModel.title(movie.Title)
+        viewModel.getMains().observe(this, Observer {
+            if(it!=null){
+                movieBundle.putParcelable("com.example.movie",it)
+                startActivity(Intent(this, MovieInfoActivity::class.java).putExtras(movieBundle))
+            }
+        })
     }
 
-    override fun manageLandscapeItemClick(movie: Movie) {
-        movieInfoFragment = MovieInfoFragment.newInstance(movie)
-        changeFragment(R.id.fl_lan_fragment_content, movieInfoFragment)
+    override fun manageLandscapeItemClick(movie: MoviePreview) {
+        viewModel.title(movie.Title)
+        viewModel.getMains().observe(this, Observer {
+            if(it!=null){
+                movieInfoFragment = MovieInfoFragment.newInstance(it)
+                changeFragment(R.id.fl_lan_fragment_content, movieInfoFragment)
+            }
+        })
+
     }
 
     override fun searchMovie(ref: String) {
@@ -37,32 +52,36 @@ class MainActivity : AppCompatActivity(), SearchFragment.onSearchListener,
             Toast.makeText(this,"You need to write the name of the movie",Toast.LENGTH_LONG).show()
         }else{
             //Realiza la busqueda
-
-            //movieFragment.updateMovieAdapter(List<Movie>)
+            viewModel.search(ref)
+            viewModel.getPreviews().observe(this, Observer {
+                if(it!=null){
+                    GlobalScope.launch {
+                        viewModel.insertpreview(it.toList())
+                    }
+                    movieFragment.updateMovieAdapter(it.toList())
+                }else{
+                    Toast.makeText(this,"Results not found",Toast.LENGTH_LONG).show()
+                }
+            })
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val movie1 = Movie("Star Wars: Episode IV - A New Hope",
-            "1977", "PG",
-            "Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, a Wookiee and two droids to save the galaxy from the Empire's world-destroying battle station, while also attempting to rescue Princess Leia from the mysterious Darth Vader.",
-            "25 May 1977", "121 min",
-            "Action, Adventure, Fantasy, Sci-Fi","George Lucas",
-            "George Lucas","Mark Hamill, Harrison Ford, Carrie Fisher, Peter Cushing",
-            "Won 6 Oscars. Another 50 wins & 28 nominations","https://m.media-amazon.com/images/M/MV5BNzVlY2MwMjktM2E4OS00Y2Y3LWE3ZjctYzhkZGM3YzA1ZWM2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
-            "imdbRating:8.6")
-
-        movie = listOf(movie1)
+        viewModel = ViewModelProviders.of(this).get(MovieDexViewModel::class.java)
         initMainFragment()
     }
 
     fun initMainFragment(){
-        movieFragment = MovieFragment.newInstance(movie)
-        val resource =  R.id.fl_fragment_list
-        changeFragment(resource, movieFragment)
+        viewModel.todospreview().observe(this, Observer {
+            if(it!=null){
+                movieFragment = MovieFragment.newInstance(it)
+                val resource =  R.id.fl_fragment_list
+                changeFragment(resource,movieFragment)
+            }
+        })
+
     }
 
     private fun changeFragment(id: Int, frag: Fragment){

@@ -10,15 +10,16 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import com.example.moviedex.DataBase.Entities.Movie
 import com.example.moviedex.DataBase.Entities.Search
+import retrofit2.http.Query
 
-const val BASE_URL = "http://www.omdbapi.com/"
+const val BASE_URL = "http://www.omdbapi.com/?"
 interface Network {
 
-    @GET("?apikey=6fd8f447&s={search}")
-    fun search(@Path("search")search:String): Deferred<Response<Search>>
+    @GET("/")
+    fun search(@Query("s")search:String, @Query("apikey") apikey:String): Deferred<Response<Search>>
 
-    @GET("?apikey=6fd8f447&t={search}")
-    fun getmovie(@Path("search")search:String): Deferred<Response<Movie>>
+    @GET("/")
+    fun getmovie(@Query("t")search:String, @Query("apikey") apikey:String): Deferred<Response<Movie>>
 
     companion object {
         var INSTANCE: Network? = null

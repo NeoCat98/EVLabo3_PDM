@@ -11,7 +11,7 @@ import com.example.moviedex.DataBase.Entities.MoviePreview
 interface previewDao {
 
     @Insert(onConflict=OnConflictStrategy.REPLACE)
-    suspend fun insert(preview:MoviePreview)
+    suspend fun insert(preview:List<MoviePreview>)
 
     @Query("SELECT * FROM previews")
     fun getall():LiveData<List<MoviePreview>>
