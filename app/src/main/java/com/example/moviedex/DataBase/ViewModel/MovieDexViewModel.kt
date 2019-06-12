@@ -34,7 +34,7 @@ class MovieDexViewModel(private val app : Application): AndroidViewModel(app) {
 
     fun todospreview(): LiveData<List<MoviePreview>> = repository.todosPreview()
 
-    private suspend fun nukepreview() = repository.nukePreview()
+    suspend fun nukepreview() = repository.nukePreview()
 
 
     fun search(search: String) =

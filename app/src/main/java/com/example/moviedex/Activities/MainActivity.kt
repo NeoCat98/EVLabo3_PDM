@@ -52,6 +52,9 @@ class MainActivity : AppCompatActivity(), SearchFragment.onSearchListener,
             Toast.makeText(this,"You need to write the name of the movie",Toast.LENGTH_LONG).show()
         }else{
             //Realiza la busqueda
+            GlobalScope.launch {
+                viewModel.nukepreview()
+            }
             viewModel.search(ref)
             viewModel.getPreviews().observe(this, Observer {
                 if(it!=null){
