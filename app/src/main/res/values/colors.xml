@@ -6,4 +6,6 @@
     <color name="color_texto">#d0e0f9</color>
     <color name="back_ground">#283654</color>
     <color name="item">#4d648c</color>
+    <color name="lightGrey">#bccadf</color>
+    <color name="grey">#c3d3ea</color>
 </resources>
