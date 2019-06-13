@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.moviedex.DataBase.DAO.previewDao
 import com.example.moviedex.DataBase.Entities.Movie
 import com.example.moviedex.DataBase.Entities.MoviePreview
@@ -25,9 +26,9 @@ class MovieDexViewModel(private val app : Application): AndroidViewModel(app) {
         val previeDAO = Roomie.getInstance(app).previewDao()
         repository = movieRepo(movieoDAO, previeDAO, Network.getNetworkInstance())
     }
-    private val movieslist = MutableLiveData<MutableList<MoviePreview>>()
+    private val movieslist = MutableLiveData<ArrayList<MoviePreview>>()
 
-    private val movieResult = MutableLiveData<Movie>()
+    private val movieResult = MutableLiveData<MutableList<Movie>>()
 
 
     suspend fun insertpreview(preview: List<MoviePreview>) = repository.insertPreview(preview)
@@ -37,50 +38,31 @@ class MovieDexViewModel(private val app : Application): AndroidViewModel(app) {
     suspend fun nukepreview() = repository.nukePreview()
 
 
-    fun search(search: String) =
-        scope.launch {
-            val response = repository.getPreview(search).await()
-            if (response.isSuccessful) {
-                when (response.code()) {
-                    200 -> movieslist.postValue(
-                        response.body()?.Search?.toMutableList() ?: arrayListOf(
-                            MoviePreview(
-                                Title = "Dummy 1"
-                            ), MoviePreview(Title = "Dummy 2")
-                        )
-                    )
-                }
-            } else {
-                Toast.makeText(app, "Ocurrio un error", Toast.LENGTH_LONG).show()
+    suspend fun nukeMovie() = repository.nukeMain()
+
+    fun search(search: String) = viewModelScope.launch  {
+        this@MovieDexViewModel.nukeMovie()
+        val response = repository.getPreview(search).await()
+        if(response.isSuccessful)with(response.body()?.Search){
+            this?.forEach {
+                getMovies(it.Title)
             }
+        }else {
+            Toast.makeText(app, "Ocurrio un error", Toast.LENGTH_LONG).show()
         }
+    }
+
+    fun getMovies(title:String) = viewModelScope.launch {
+        val response = repository.getMain(title).await()
+        if(response.isSuccessful)with(response.body()){
+            this@MovieDexViewModel.insertMain(this!!)
+        }
+    }
 
 
     private suspend fun insertMain(preview: Movie) = repository.insertMain(preview)
 
     fun todosMain(): LiveData<List<Movie>> = repository.todosMain()
 
-    private suspend fun nukeMain() = repository.nukeMain()
-
-
-    fun title(name: String) {
-        scope.launch {
-            val response = repository.getMain(name).await()
-            if (response.isSuccessful) with(response) {
-                when (this.code()) {
-                    200 -> movieResult.postValue(this.body())
-                }
-            } else {
-                Toast.makeText(app, "Ocurrio un error", Toast.LENGTH_LONG).show()
-            }
-        }
-
-
-    }
-
-
-    fun getPreviews(): LiveData<MutableList<MoviePreview>> = movieslist
-
-    fun getMains(): LiveData<Movie> = movieResult
 
 }

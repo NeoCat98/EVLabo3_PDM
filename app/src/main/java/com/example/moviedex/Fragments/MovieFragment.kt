@@ -17,12 +17,12 @@ import java.lang.ClassCastException
 
 
 class MovieFragment : Fragment() {
-    private lateinit var movies: List<MoviePreview>
+    private lateinit var movies: List<Movie>
     private lateinit var movieAdapter: MovieAdapter
     var listenerTool :  SearchNewMovieListener? = null
 
     companion object {
-        fun newInstance(dataset : List<MoviePreview>): MovieFragment {
+        fun newInstance(dataset : List<Movie>): MovieFragment {
             val newFragment = MovieFragment()
             newFragment.movies = dataset
             return newFragment
@@ -30,16 +30,16 @@ class MovieFragment : Fragment() {
     }
 
     interface SearchNewMovieListener{
-        fun managePortraitItemClick(movie: MoviePreview)
+        fun managePortraitItemClick(movie: Movie)
 
-        fun manageLandscapeItemClick(movie: MoviePreview)
+        fun manageLandscapeItemClick(movie: Movie)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_movie_list, container, false)
         if(savedInstanceState != null)
-            movies = savedInstanceState.getParcelableArrayList<MoviePreview>("KEY_MOVIE")!!
+            movies = savedInstanceState.getParcelableArrayList<Movie>("KEY_MOVIE")!!
         initRecyclerView(resources.configuration.orientation, view)
 
         return view
@@ -67,11 +67,11 @@ class MovieFragment : Fragment() {
 
         if(orientation == Configuration.ORIENTATION_PORTRAIT){
             movieAdapter = MovieAdapter(
-                movies,{ movie: MoviePreview -> listenerTool?.managePortraitItemClick(movie) })
+                movies,{ movie: Movie -> listenerTool?.managePortraitItemClick(movie) })
 
         }else{
             movieAdapter = MovieAdapter(
-                movies,{ movie: MoviePreview -> listenerTool?.manageLandscapeItemClick(movie) })
+                movies,{ movie: Movie -> listenerTool?.manageLandscapeItemClick(movie) })
         }
         container.list.apply {
             setHasFixedSize(true)
@@ -80,7 +80,7 @@ class MovieFragment : Fragment() {
         }
     }
 
-    fun updateMovieAdapter(movieList: List<MoviePreview>){
+    fun updateMovieAdapter(movieList: List<Movie>){
         movieAdapter.changeDataSet(movieList)
     }
 
