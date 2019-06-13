@@ -38,8 +38,7 @@ class MovieInfoFragment : Fragment() {
         view.movie_title_main_content_fragment.text = movie.Title
         view.runtime_main_content_fragment.text = movie.Runtime
         view.released_main_content_fragment.text = movie.Released
-        view.rated_main_content_fragment.text = movie.imdbRating
-        view.writer_main_content_fragment.text = movie.Language
+        view.lenguje_movie_fragment_info.text = movie.Language
         view.plot_main_content_fragment.text = movie.Plot
         Glide.with(this)
             .load(movie.Poster)
