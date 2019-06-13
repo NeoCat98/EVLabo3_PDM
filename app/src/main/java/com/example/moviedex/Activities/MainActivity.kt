@@ -49,19 +49,20 @@ class MainActivity : AppCompatActivity(), SearchFragment.onSearchListener,
     override fun searchMovie(ref: String) {
         if(!isNetworkAvailable()){
             Toast.makeText(this,"You need internet connection to be able to search",Toast.LENGTH_LONG).show()
-        }
-        if(ref.isEmpty()){
-            Toast.makeText(this,"You need to write the name of the movie",Toast.LENGTH_LONG).show()
-        }else{
-            //Realiza la busqueda
-            viewModel.search(ref)
-            viewModel.todosMain().observe(this, Observer {
-                if(it!=null){
-                    movieFragment = MovieFragment.newInstance(it)
-                }else{
-                    Toast.makeText(this,"Results not found",Toast.LENGTH_LONG).show()
-                }
-            })
+        }else {
+            if (ref.isEmpty()) {
+                Toast.makeText(this, "You needgit  to write the name of the movie", Toast.LENGTH_LONG).show()
+            } else {
+                //Realiza la busqueda
+                viewModel.search(ref)
+                viewModel.todosMain().observe(this, Observer {
+                    if (it != null) {
+                        movieFragment = MovieFragment.newInstance(it)
+                    } else {
+                        Toast.makeText(this, "Results not found", Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
         }
     }
 
